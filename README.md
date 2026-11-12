@@ -42,8 +42,9 @@ npm run dev
 
 ```text
 ├── index.html              # Standalone app launcher (double-click to run anywhere)
+├── App.jsx                 # Standalone React component file (.jsx)
 ├── style.css               # Clean human design system stylesheet
-├── app.js                  # Standalone React 18 logic & component tree
+├── app.js                  # Standalone JavaScript application code
 ├── server.cjs              # Zero-dependency local Node.js server
 ├── start.bat               # Windows 1-click launcher for local server
 ├── package.json            # npm package configuration

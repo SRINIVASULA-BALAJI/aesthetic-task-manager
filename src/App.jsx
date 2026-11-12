@@ -1,6 +1,68 @@
+/* ========================================================
+   Crafted Task Workspace - Human & Minimalist Logic
+   Clean, authentic, distraction-free productivity system
+   ======================================================== */
+
 import React, { useState, useEffect, useMemo, useRef, Component } from 'react';
-import confetti from 'canvas-confetti';
-import Icon from './components/Icon.jsx';
+
+// ==========================================
+// CLEAN, HANDCRAFTED SVG ICONS
+// ==========================================
+function Icon({ name, className = "w-4 h-4", fill = "none" }) {
+  const paths = {
+    'check': <polyline points="20 6 9 17 4 12" />,
+    'check-circle-2': <React.Fragment><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></React.Fragment>,
+    'circle': <circle cx="12" cy="12" r="9"/>,
+    'clock': <React.Fragment><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></React.Fragment>,
+    'star': <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>,
+    'edit-3': <React.Fragment><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></React.Fragment>,
+    'trash-2': <React.Fragment><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></React.Fragment>,
+    'plus': <React.Fragment><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></React.Fragment>,
+    'search': <React.Fragment><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></React.Fragment>,
+    'x': <React.Fragment><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></React.Fragment>,
+    'chevron-down': <polyline points="6 9 12 15 18 9"/>,
+    'chevron-right': <polyline points="9 18 15 12 9 6"/>,
+    'calendar': <React.Fragment><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></React.Fragment>,
+    'timer': <React.Fragment><line x1="10" y1="2" x2="14" y2="2"/><line x1="12" y1="14" x2="15" y2="11"/><circle cx="12" cy="14" r="8"/></React.Fragment>,
+    'list': <React.Fragment><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></React.Fragment>,
+    'kanban': <React.Fragment><path d="M6 5v11"/><path d="M12 5v6"/><path d="M18 5v14"/></React.Fragment>,
+    'volume-2': <React.Fragment><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></React.Fragment>,
+    'volume-x': <React.Fragment><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></React.Fragment>,
+    'sun': <React.Fragment><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></React.Fragment>,
+    'moon': <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>,
+    'arrow-down-up': <React.Fragment><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></React.Fragment>,
+    'download': <React.Fragment><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></React.Fragment>,
+    'upload': <React.Fragment><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></React.Fragment>,
+    'copy': <React.Fragment><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></React.Fragment>,
+    'user': <React.Fragment><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></React.Fragment>,
+    'mail': <React.Fragment><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></React.Fragment>,
+    'lock': <React.Fragment><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></React.Fragment>,
+    'eye': <React.Fragment><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></React.Fragment>,
+    'eye-off': <React.Fragment><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/></React.Fragment>,
+    'shield-check': <React.Fragment><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></React.Fragment>,
+    'play': <polygon points="5 3 19 12 5 21 5 3"/>,
+    'pause': <React.Fragment><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></React.Fragment>,
+    'rotate-ccw': <React.Fragment><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></React.Fragment>,
+    'log-out': <React.Fragment><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></React.Fragment>,
+    'arrow-right': <React.Fragment><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></React.Fragment>,
+    'alert-circle': <React.Fragment><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></React.Fragment>
+  };
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill={fill}
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      {paths[name] || <circle cx="12" cy="12" r="8"/>}
+    </svg>
+  );
+}
 
 // ==========================================
 // ERROR BOUNDARY
@@ -14,25 +76,22 @@ class ErrorBoundary extends Component {
     return { hasError: true, error };
   }
   componentDidCatch(error, errorInfo) {
-    console.error("AuraTask error caught:", error, errorInfo);
+    console.error("Workspace caught error:", error, errorInfo);
   }
   render() {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex items-center justify-center p-6 text-center">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl max-w-md shadow-2xl glass-card">
-            <div className="w-12 h-12 mx-auto rounded-2xl bg-rose-100 dark:bg-rose-950/50 flex items-center justify-center text-rose-500 mb-4">
-              <Icon name="alert-circle" className="w-6 h-6" />
-            </div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Display refreshed smoothly</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">
-              {this.state.error?.message || "An interface sync occurred. Click below to continue organizing your tasks."}
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-8 rounded-2xl max-w-sm card-shadow">
+            <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Session reloaded</h2>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-5">
+              Click below to return to your tasks.
             </p>
             <button
               onClick={() => this.setState({ hasError: false, error: null })}
-              className="px-5 py-2.5 rounded-xl bg-brand-600 text-white font-semibold shadow-glow text-sm btn-press"
+              className="px-4 py-2 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 text-xs font-medium btn-press"
             >
-              Resume Workspace
+              Resume
             </button>
           </div>
         </div>
@@ -43,175 +102,144 @@ class ErrorBoundary extends Component {
 }
 
 // ==========================================
-// AUDIO SYNTHESIZER
+// SUBTLE, TACTILE SOUNDS
 // ==========================================
-const playSound = (type = 'complete') => {
+const playSound = (type = 'click') => {
   try {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) return;
     const ctx = new AudioContext();
 
     if (type === 'complete') {
-      const osc1 = ctx.createOscillator();
-      const osc2 = ctx.createOscillator();
+      const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-
-      osc1.type = 'sine';
-      osc2.type = 'sine';
-      osc1.frequency.setValueAtTime(587.33, ctx.currentTime);
-      osc1.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.18);
-
-      osc2.frequency.setValueAtTime(880, ctx.currentTime + 0.08);
-      osc2.frequency.exponentialRampToValueAtTime(1174.66, ctx.currentTime + 0.28);
-
-      gain.gain.setValueAtTime(0.12, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
-
-      osc1.connect(gain);
-      osc2.connect(gain);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(540, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(720, ctx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+      osc.connect(gain);
       gain.connect(ctx.destination);
-
-      osc1.start();
-      osc2.start(ctx.currentTime + 0.08);
-      osc1.stop(ctx.currentTime + 0.35);
-      osc2.stop(ctx.currentTime + 0.35);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.18);
     } else if (type === 'click') {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(600, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.04);
-      gain.gain.setValueAtTime(0.08, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+      osc.frequency.setValueAtTime(320, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(140, ctx.currentTime + 0.03);
+      gain.gain.setValueAtTime(0.05, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start();
-      osc.stop(ctx.currentTime + 0.04);
+      osc.stop(ctx.currentTime + 0.03);
     } else if (type === 'timer') {
-      [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+      [440, 554.37, 659.25].forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.12);
-        gain.gain.setValueAtTime(0.15, ctx.currentTime + idx * 0.12);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.12 + 0.3);
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.1);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime + idx * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 0.25);
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.start(ctx.currentTime + idx * 0.12);
-        osc.stop(ctx.currentTime + idx * 0.12 + 0.3);
+        osc.start(ctx.currentTime + idx * 0.1);
+        osc.stop(ctx.currentTime + idx * 0.1 + 0.25);
       });
     }
   } catch (e) {}
 };
 
+// ==========================================
+// NATURAL, RESTRAINED CONSTANTS
+// ==========================================
 const DEFAULT_CATEGORIES = [
-  { id: 'all', name: 'All Tags' },
-  { id: 'work', name: 'Work', bg: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800/60' },
-  { id: 'personal', name: 'Personal', bg: 'bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800/60' },
-  { id: 'study', name: 'Study', bg: 'bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 border-cyan-200 dark:border-cyan-800/60' },
-  { id: 'health', name: 'Health', bg: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/60' },
-  { id: 'finance', name: 'Finance', bg: 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800/60' },
+  { id: 'all', name: 'All' },
+  { id: 'work', name: 'Work', badge: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700' },
+  { id: 'personal', name: 'Personal', badge: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700' },
+  { id: 'study', name: 'Study', badge: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700' },
+  { id: 'health', name: 'Health', badge: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700' },
 ];
 
 const PRIORITIES = {
-  high: {
-    label: 'High',
-    badge: 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-900/60',
-    dot: 'bg-rose-500'
-  },
-  medium: {
-    label: 'Medium',
-    badge: 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-900/60',
-    dot: 'bg-amber-500'
-  },
-  low: {
-    label: 'Low',
-    badge: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/60',
-    dot: 'bg-emerald-500'
-  }
+  high: { label: 'High', dot: 'bg-red-500', text: 'text-red-600 dark:text-red-400' },
+  medium: { label: 'Medium', dot: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400' },
+  low: { label: 'Low', dot: 'bg-zinc-400', text: 'text-zinc-500 dark:text-zinc-400' }
 };
 
-const DAILY_QUOTES = [
-  { text: "Small daily disciplines repeated consistently lead to monumental achievements.", author: "Robin Sharma" },
-  { text: "Focus is a muscle. The more you eliminate distractions, the stronger it grows.", author: "James Clear" },
-  { text: "Action is the foundational key to all success.", author: "Pablo Picasso" },
-  { text: "You don't have to be extreme, just consistent.", author: "Anonymous" }
-];
-
 const DEFAULT_DEMO_USER = {
-  id: 'demo_user_1',
+  id: 'user_alex',
   name: 'Alex Rivera',
-  email: 'alex@auratask.io',
+  email: 'alex@example.com',
   password: 'password123',
-  avatarColor: 'from-brand-600 to-purple-600',
   createdAt: Date.now()
 };
 
 const createStarterTasksForUser = (userName) => [
   {
     id: '1',
-    title: `Welcome to AuraTask Pro, ${userName}! 👋`,
-    description: 'Explore the checklist, Kanban view, and toggle complete / uncomplete freely.',
-    category: 'personal',
+    title: 'Review quarterly goals and deliverables',
+    description: 'Verify deadlines, align milestone priorities with team members.',
+    category: 'work',
     priority: 'high',
     status: 'todo',
     dueDate: new Date().toISOString().split('T')[0],
     completed: false,
     starred: true,
     subtasks: [
-      { id: 'st_1', title: 'Try switching to the Kanban Board view', done: true },
-      { id: 'st_2', title: 'Open the Pomodoro Focus Timer', done: false },
-      { id: 'st_3', title: 'Add a new task or custom tag', done: false }
+      { id: 'st_1', title: 'Draft summary sheet', done: true },
+      { id: 'st_2', title: 'Schedule follow-up call', done: false }
     ],
-    createdAt: Date.now() - 3600000 * 2,
+    createdAt: Date.now() - 3600000 * 3,
   },
   {
     id: '2',
-    title: 'Launch redesign mockups to product team',
-    description: 'Review typography, responsiveness tokens, and light/dark theme contrast.',
-    category: 'work',
-    priority: 'high',
+    title: '30-minute cardio session',
+    description: 'Outdoor jog or cycling workout.',
+    category: 'health',
+    priority: 'medium',
     status: 'in_progress',
     dueDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
     completed: false,
-    starred: true,
-    subtasks: [
-      { id: 'st_4', title: 'Prepare Figma prototype link', done: true },
-      { id: 'st_5', title: 'Compile feedback summary', done: false }
-    ],
-    createdAt: Date.now() - 3600000 * 6,
+    starred: false,
+    subtasks: [],
+    createdAt: Date.now() - 3600000 * 5,
   },
   {
     id: '3',
-    title: '30-minute afternoon stretch & hydration',
-    description: 'Step away from screen, hydrate, and stretch.',
-    category: 'health',
+    title: 'Organize desk and filing documents',
+    description: 'Clean workspace before evening.',
+    category: 'personal',
     priority: 'low',
     status: 'completed',
     dueDate: new Date().toISOString().split('T')[0],
     completed: true,
     starred: false,
     subtasks: [],
-    createdAt: Date.now() - 3600000 * 10,
+    createdAt: Date.now() - 3600000 * 8,
   }
 ];
 
-export default function App() {
+// ==========================================
+// MAIN WORKSPACE COMPONENT
+// ==========================================
+function App() {
   const [isDark, setIsDark] = useState(() => {
-    const saved = localStorage.getItem('auratask_theme');
+    const saved = localStorage.getItem('folio_theme');
     if (saved) return saved === 'dark';
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
   const [soundEnabled, setSoundEnabled] = useState(() => {
-    return localStorage.getItem('auratask_sound') !== 'false';
+    return localStorage.getItem('folio_sound') === 'true';
   });
 
   const [viewMode, setViewMode] = useState('list');
 
   const [registeredUsers, setRegisteredUsers] = useState(() => {
     try {
-      const saved = localStorage.getItem('auratask_users');
+      const saved = localStorage.getItem('folio_users');
       return saved ? JSON.parse(saved) : [DEFAULT_DEMO_USER];
     } catch (e) {
       return [DEFAULT_DEMO_USER];
@@ -220,7 +248,7 @@ export default function App() {
 
   const [currentUser, setCurrentUser] = useState(() => {
     try {
-      const saved = localStorage.getItem('auratask_active_user');
+      const saved = localStorage.getItem('folio_active_user');
       return saved ? JSON.parse(saved) : null;
     } catch (e) {
       return null;
@@ -231,7 +259,7 @@ export default function App() {
   const [tasks, setTasks] = useState([]);
   const [categories, setCategories] = useState(() => {
     try {
-      const saved = localStorage.getItem('auratask_categories');
+      const saved = localStorage.getItem('folio_categories');
       return saved ? JSON.parse(saved) : DEFAULT_CATEGORIES;
     } catch (e) {
       return DEFAULT_CATEGORIES;
@@ -251,43 +279,39 @@ export default function App() {
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
   const [pomodoroSelectedTask, setPomodoroSelectedTask] = useState(null);
 
-  const quote = useMemo(() => {
-    return DAILY_QUOTES[Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % DAILY_QUOTES.length];
-  }, []);
-
   useEffect(() => {
-    localStorage.setItem('auratask_categories', JSON.stringify(categories));
+    localStorage.setItem('folio_categories', JSON.stringify(categories));
   }, [categories]);
 
   useEffect(() => {
-    localStorage.setItem('auratask_sound', soundEnabled ? 'true' : 'false');
+    localStorage.setItem('folio_sound', soundEnabled ? 'true' : 'false');
   }, [soundEnabled]);
 
   useEffect(() => {
-    localStorage.setItem('auratask_users', JSON.stringify(registeredUsers));
+    localStorage.setItem('folio_users', JSON.stringify(registeredUsers));
   }, [registeredUsers]);
 
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem('auratask_active_user', JSON.stringify(currentUser));
+      localStorage.setItem('folio_active_user', JSON.stringify(currentUser));
     } else {
-      localStorage.removeItem('auratask_active_user');
+      localStorage.removeItem('folio_active_user');
     }
   }, [currentUser]);
 
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add('dark');
-      localStorage.setItem('auratask_theme', 'dark');
+      localStorage.setItem('folio_theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('auratask_theme', 'light');
+      localStorage.setItem('folio_theme', 'light');
     }
   }, [isDark]);
 
   useEffect(() => {
     if (currentUser) {
-      const key = `auratask_tasks_${currentUser.id}`;
+      const key = `folio_tasks_${currentUser.id}`;
       const saved = localStorage.getItem(key);
       if (saved) {
         try {
@@ -307,21 +331,10 @@ export default function App() {
 
   useEffect(() => {
     if (currentUser) {
-      const key = `auratask_tasks_${currentUser.id}`;
+      const key = `folio_tasks_${currentUser.id}`;
       localStorage.setItem(key, JSON.stringify(tasks));
     }
   }, [tasks, currentUser]);
-
-  const triggerConfetti = () => {
-    if (typeof confetti === 'function') {
-      confetti({
-        particleCount: 85,
-        spread: 75,
-        origin: { y: 0.6 },
-        colors: ['#6366f1', '#a855f7', '#ec4899', '#10b981']
-      });
-    }
-  };
 
   const toggleComplete = (id) => {
     const targetTask = tasks.find(t => t.id === id);
@@ -334,10 +347,6 @@ export default function App() {
     setTasks(prev => {
       return prev.map(t => {
         if (t.id === id) {
-          if (nextCompletedState) {
-            const remaining = prev.filter(item => item.id !== id && !item.completed).length;
-            if (remaining === 0) triggerConfetti();
-          }
           return { 
             ...t, 
             completed: nextCompletedState,
@@ -353,15 +362,10 @@ export default function App() {
     if (soundEnabled) playSound(newStatus === 'completed' ? 'complete' : 'click');
     setTasks(prev => prev.map(t => {
       if (t.id === id) {
-        const isCompleted = newStatus === 'completed';
-        if (isCompleted && !t.completed) {
-          const remaining = prev.filter(item => item.id !== id && !item.completed).length;
-          if (remaining === 0) triggerConfetti();
-        }
         return {
           ...t,
           status: newStatus,
-          completed: isCompleted
+          completed: newStatus === 'completed'
         };
       }
       return t;
@@ -404,7 +408,7 @@ export default function App() {
   };
 
   const clearCompleted = () => {
-    if (window.confirm("Are you sure you want to remove all completed tasks?")) {
+    if (window.confirm("Remove all completed tasks?")) {
       setTasks(prev => prev.filter(t => !t.completed));
     }
   };
@@ -414,8 +418,7 @@ export default function App() {
     const completed = tasks.filter(t => t.completed).length;
     const pending = total - completed;
     const starred = tasks.filter(t => t.starred).length;
-    const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
-    return { total, completed, pending, starred, percentage };
+    return { total, completed, pending, starred };
   }, [tasks]);
 
   const filteredTasks = useMemo(() => {
@@ -459,7 +462,7 @@ export default function App() {
         onLogin={(u) => setCurrentUser(u)}
         onSignUp={(u) => {
           setRegisteredUsers(prev => [...prev, u]);
-          localStorage.setItem(`auratask_tasks_${u.id}`, JSON.stringify(createStarterTasksForUser(u.name)));
+          localStorage.setItem(`folio_tasks_${u.id}`, JSON.stringify(createStarterTasksForUser(u.name)));
           setCurrentUser(u);
         }}
         isDark={isDark}
@@ -469,503 +472,383 @@ export default function App() {
   }
 
   return (
-    <ErrorBoundary>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 animate-fadeIn">
-        
-        {/* HEADER & BRAND */}
-        <header className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-purple-500 flex items-center justify-center text-white shadow-glow">
-              <Icon name="sparkles" className="w-6 h-6 stroke-[2.2]" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                  AuraTask Pro
-                </h1>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-brand-300">
-                  v2.1
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Focus workspace & aesthetic task manager
-              </p>
-            </div>
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12 animate-fadeIn">
+      
+      {/* CLEAN HUMAN TOP BAR */}
+      <header className="flex items-center justify-between pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800/80">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center font-bold text-sm">
+            <Icon name="check" className="w-4 h-4 stroke-[2.5]" />
           </div>
-
-          {/* ACTION TOOLBAR */}
-          <div className="flex flex-wrap items-center justify-between md:justify-end gap-2">
-            
-            <button
-              onClick={() => setIsPomodoroOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all btn-press shadow-sm"
-            >
-              <Icon name="clock" className="w-3.5 h-3.5" />
-              <span>Focus Timer</span>
-            </button>
-
-            <div className="flex items-center p-1 bg-slate-200/70 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
-              <button
-                onClick={() => setViewMode('list')}
-                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg font-medium transition-all ${
-                  viewMode === 'list'
-                    ? 'bg-white dark:bg-surface-darkCard text-brand-600 dark:text-brand-400 shadow-sm font-semibold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                <Icon name="list" className="w-3.5 h-3.5" />
-                <span>List</span>
-              </button>
-              <button
-                onClick={() => setViewMode('kanban')}
-                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg font-medium transition-all ${
-                  viewMode === 'kanban'
-                    ? 'bg-white dark:bg-surface-darkCard text-brand-600 dark:text-brand-400 shadow-sm font-semibold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                <Icon name="kanban" className="w-3.5 h-3.5" />
-                <span>Board</span>
-              </button>
-            </div>
-
-            <button
-              onClick={() => setSoundEnabled(!soundEnabled)}
-              title={soundEnabled ? "Mute audio effects" : "Enable audio effects"}
-              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors btn-press"
-            >
-              <Icon name={soundEnabled ? "volume-2" : "volume-x"} className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={() => setIsDark(!isDark)}
-              title={isDark ? "Light Mode" : "Dark Mode"}
-              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors btn-press"
-            >
-              <Icon name={isDark ? "sun" : "moon"} className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={() => setIsBackupOpen(true)}
-              title="Export or Import tasks"
-              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors btn-press"
-            >
-              <Icon name="arrow-down-up" className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={() => setIsProfileOpen(true)}
-              className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-white dark:bg-surface-darkCard border border-slate-200 dark:border-surface-darkBorder shadow-sm hover:border-brand-500/50 transition-all btn-press"
-            >
-              <div className={`w-6 h-6 rounded-lg bg-gradient-to-tr ${currentUser.avatarColor || 'from-brand-600 to-indigo-600'} flex items-center justify-center text-white font-bold text-[10px] uppercase`}>
-                {(currentUser.name || 'U').charAt(0)}
-              </div>
-              <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 max-w-[90px] truncate">
-                {(currentUser.name || 'User').split(' ')[0]}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setIsAddFormOpen(true)}
-              className="flex items-center gap-1.5 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-medium px-3.5 py-2 rounded-xl shadow-glow transition-all btn-press text-xs"
-            >
-              <Icon name="plus" className="w-4 h-4 stroke-[2.5]" />
-              <span>New Task</span>
-            </button>
-          </div>
-        </header>
-
-        {/* DAILY INSPIRATION */}
-        <div className="relative overflow-hidden mb-6 p-4 rounded-2xl bg-gradient-to-r from-brand-900/20 via-purple-900/10 to-indigo-900/20 border border-brand-500/20 dark:border-brand-500/30 glass-card">
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-xl bg-brand-500/20 text-brand-600 dark:text-brand-300">
-              <Icon name="quote" className="w-4 h-4" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-200 italic">
-                "{quote.text}"
-              </p>
-              <p className="text-[11px] font-semibold text-brand-600 dark:text-brand-400 mt-0.5">
-                — {quote.author}
-              </p>
-            </div>
+          <div>
+            <h1 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight leading-none">
+              Workspace
+            </h1>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+              {stats.pending === 1 ? '1 task remaining' : `${stats.pending} tasks remaining`}
+            </p>
           </div>
         </div>
 
-        {/* STATS OVERVIEW */}
-        <section className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
-          <div className="p-4 rounded-2xl bg-white dark:bg-surface-darkCard border border-slate-200/80 dark:border-surface-darkBorder/80 shadow-sm glass-card">
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Total Tasks</span>
-            <div className="text-2xl font-bold text-slate-800 dark:text-white mt-1">{stats.total}</div>
-          </div>
+        {/* CONTROLS */}
+        <div className="flex items-center gap-1 sm:gap-2">
           
-          <div className="p-4 rounded-2xl bg-white dark:bg-surface-darkCard border border-slate-200/80 dark:border-surface-darkBorder/80 shadow-sm glass-card">
-            <span className="text-xs font-medium text-amber-500 dark:text-amber-400">In Progress</span>
-            <div className="text-2xl font-bold text-slate-800 dark:text-white mt-1">{stats.pending}</div>
-          </div>
+          <button
+            onClick={() => setIsPomodoroOpen(true)}
+            title="Focus timer"
+            className="p-2 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors btn-press"
+          >
+            <Icon name="timer" className="w-4 h-4" />
+          </button>
 
-          <div className="p-4 rounded-2xl bg-white dark:bg-surface-darkCard border border-slate-200/80 dark:border-surface-darkBorder/80 shadow-sm glass-card">
-            <span className="text-xs font-medium text-emerald-500 dark:text-emerald-400">Completed</span>
-            <div className="text-2xl font-bold text-slate-800 dark:text-white mt-1">{stats.completed}</div>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-white dark:bg-surface-darkCard border border-slate-200/80 dark:border-surface-darkBorder/80 shadow-sm glass-card">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-brand-600 dark:text-brand-400">Completion</span>
-              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">{stats.percentage}%</span>
-            </div>
-            <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 mt-3 overflow-hidden">
-              <div 
-                className="bg-gradient-to-r from-brand-500 to-emerald-400 h-2 rounded-full transition-all duration-500 ease-out" 
-                style={{ width: `${stats.percentage}%` }}
-              ></div>
-            </div>
-          </div>
-        </section>
-
-        {/* QUICK INPUT BAR */}
-        <div className="mb-6">
-          <QuickAddBar onAdd={addTask} categories={categories} />
-        </div>
-
-        {/* FILTERS & SEARCH ROW */}
-        <div className="space-y-3 mb-6">
-          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-            
-            <div className="flex items-center p-1 bg-slate-200/60 dark:bg-slate-900 rounded-xl text-xs sm:text-sm font-medium border border-slate-200 dark:border-slate-800">
-              <button
-                onClick={() => setActiveTab('all')}
-                className={`px-3 py-1.5 rounded-lg transition-all ${
-                  activeTab === 'all'
-                    ? 'bg-white dark:bg-surface-darkCard text-brand-600 dark:text-brand-400 shadow-sm font-semibold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                All ({tasks.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('active')}
-                className={`px-3 py-1.5 rounded-lg transition-all ${
-                  activeTab === 'active'
-                    ? 'bg-white dark:bg-surface-darkCard text-brand-600 dark:text-brand-400 shadow-sm font-semibold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Active ({stats.pending})
-              </button>
-              <button
-                onClick={() => setActiveTab('completed')}
-                className={`px-3 py-1.5 rounded-lg transition-all ${
-                  activeTab === 'completed'
-                    ? 'bg-white dark:bg-surface-darkCard text-brand-600 dark:text-brand-400 shadow-sm font-semibold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Done ({stats.completed})
-              </button>
-              <button
-                onClick={() => setActiveTab('starred')}
-                className={`px-3 py-1.5 rounded-lg transition-all ${
-                  activeTab === 'starred'
-                    ? 'bg-white dark:bg-surface-darkCard text-amber-500 shadow-sm font-semibold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                ★ Starred ({stats.starred})
-              </button>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <div className="relative flex-1 sm:w-60">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                  <Icon name="search" className="w-4 h-4" />
-                </div>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search tasks or subtasks..."
-                  className="w-full pl-9 pr-8 py-1.5 rounded-xl text-xs sm:text-sm bg-white dark:bg-surface-darkCard border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 transition-all"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                  >
-                    <Icon name="x" className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-2.5 py-1.5 rounded-xl text-xs sm:text-sm bg-white dark:bg-surface-darkCard border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none"
-              >
-                <option value="date">Newest</option>
-                <option value="dueDate">Due Date</option>
-                <option value="priority">Priority</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Category Tags Bar */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-            <span className="text-slate-400 font-medium whitespace-nowrap pl-1">Tags:</span>
-            {categories.map(cat => {
-              const isSelected = selectedCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-3 py-1.5 rounded-full font-medium transition-all whitespace-nowrap border ${
-                    isSelected
-                      ? 'bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900 dark:border-white shadow-sm'
-                      : 'bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
-                  }`}
-                >
-                  {cat.name}
-                </button>
-              );
-            })}
-            
+          <div className="flex items-center bg-zinc-100 dark:bg-zinc-800/80 p-0.5 rounded-lg border border-zinc-200/60 dark:border-zinc-700/60 text-xs">
             <button
-              onClick={() => setIsTagModalOpen(true)}
-              className="px-2.5 py-1.5 rounded-full font-medium border border-dashed border-slate-300 dark:border-slate-700 text-slate-500 hover:text-brand-600 dark:hover:text-brand-400 hover:border-brand-500 transition-colors flex items-center gap-1"
+              onClick={() => setViewMode('list')}
+              className={`px-2.5 py-1 rounded-md font-medium transition-all ${
+                viewMode === 'list'
+                  ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm'
+                  : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200'
+              }`}
             >
-              <Icon name="plus" className="w-3 h-3" />
-              <span>Add Tag</span>
+              List
+            </button>
+            <button
+              onClick={() => setViewMode('kanban')}
+              className={`px-2.5 py-1 rounded-md font-medium transition-all ${
+                viewMode === 'kanban'
+                  ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm'
+                  : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200'
+              }`}
+            >
+              Board
             </button>
           </div>
+
+          <button
+            onClick={() => setIsDark(!isDark)}
+            title={isDark ? "Light mode" : "Dark mode"}
+            className="p-2 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors btn-press"
+          >
+            <Icon name={isDark ? "sun" : "moon"} className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={() => setIsBackupOpen(true)}
+            title="Backup & Export"
+            className="p-2 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors btn-press"
+          >
+            <Icon name="arrow-down-up" className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={() => setIsProfileOpen(true)}
+            className="flex items-center gap-2 pl-2 pr-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-xs font-medium text-zinc-700 dark:text-zinc-300 btn-press ml-1"
+          >
+            <div className="w-5 h-5 rounded-full bg-zinc-800 dark:bg-zinc-200 text-white dark:text-zinc-900 flex items-center justify-center text-[10px] font-bold">
+              {(currentUser.name || 'U').charAt(0)}
+            </div>
+            <span className="hidden sm:inline">{(currentUser.name || 'User').split(' ')[0]}</span>
+          </button>
+
+          <button
+            onClick={() => setIsAddFormOpen(true)}
+            className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors btn-press ml-1"
+          >
+            <Icon name="plus" className="w-3.5 h-3.5" />
+            <span>New</span>
+          </button>
+        </div>
+      </header>
+
+      {/* QUICK INLINE INPUT */}
+      <div className="mb-6">
+        <QuickAddBar onAdd={addTask} categories={categories} />
+      </div>
+
+      {/* FILTER TABS & SEARCH */}
+      <div className="space-y-3 mb-6">
+        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+          
+          <div className="flex items-center gap-1 text-xs font-medium border-b border-zinc-200 dark:border-zinc-800 pb-2 sm:pb-0 sm:border-none">
+            {[
+              { id: 'all', label: 'All', count: tasks.length },
+              { id: 'active', label: 'Active', count: stats.pending },
+              { id: 'completed', label: 'Done', count: stats.completed },
+              { id: 'starred', label: 'Starred', count: stats.starred }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-3 py-1.5 rounded-md transition-colors ${
+                  activeTab === tab.id
+                    ? 'bg-zinc-200/80 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold'
+                    : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
+                }`}
+              >
+                {tab.label} <span className="opacity-60 text-[11px] ml-0.5">{tab.count}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1 sm:w-52">
+              <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none">
+                <Icon name="search" className="w-3.5 h-3.5" />
+              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..."
+                className="w-full pl-8 pr-7 py-1 rounded-md text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 placeholder-zinc-400 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 transition-colors"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+                >
+                  <Icon name="x" className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-2 py-1 rounded-md text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 focus:outline-none"
+            >
+              <option value="date">Newest</option>
+              <option value="dueDate">Due date</option>
+              <option value="priority">Priority</option>
+            </select>
+          </div>
         </div>
 
-        {/* VIEW RENDERER */}
-        {viewMode === 'list' ? (
-          <div className="space-y-3">
-            {filteredTasks.length === 0 ? (
-              <EmptyState
-                searchQuery={searchQuery}
-                activeTab={activeTab}
-                onOpenAdd={() => setIsAddFormOpen(true)}
-                onSwitchTab={(t) => setActiveTab(t)}
-              />
-            ) : (
-              filteredTasks.map(task => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  categories={categories}
-                  onToggle={toggleComplete}
-                  onStar={toggleStar}
-                  onEdit={(t) => setEditingTask(t)}
-                  onDelete={deleteTask}
-                  onToggleSubtask={toggleSubtask}
-                  onStartFocus={(t) => {
-                    setPomodoroSelectedTask(t);
-                    setIsPomodoroOpen(true);
-                  }}
-                />
-              ))
-            )}
-          </div>
-        ) : (
-          <KanbanBoard
-            tasks={filteredTasks}
-            categories={categories}
-            onMoveTask={setTaskStatus}
-            onToggleComplete={toggleComplete}
-            onEdit={(t) => setEditingTask(t)}
-            onDelete={deleteTask}
-          />
-        )}
-
-        {/* FOOTER BAR */}
-        {tasks.length > 0 && (
-          <div className="mt-8 pt-4 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-            <span>Showing {filteredTasks.length} of {tasks.length} tasks</span>
-            {stats.completed > 0 && (
+        {/* TAG PILLS */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+          {categories.map(cat => {
+            const isSelected = selectedCategory === cat.id;
+            return (
               <button
-                onClick={clearCompleted}
-                className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors flex items-center gap-1"
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-2.5 py-1 rounded-md text-[11px] transition-colors border ${
+                  isSelected
+                    ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-zinc-900 dark:border-white font-medium'
+                    : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
+                }`}
               >
-                <Icon name="trash-2" className="w-3.5 h-3.5" />
-                Clear completed ({stats.completed})
+                {cat.name}
               </button>
-            )}
-          </div>
-        )}
-
-        {/* MODALS */}
-        {isAddFormOpen && (
-          <TaskModal
-            title="Create New Task"
-            categories={categories}
-            onClose={() => setIsAddFormOpen(false)}
-            onSave={addTask}
-          />
-        )}
-
-        {editingTask && (
-          <TaskModal
-            title="Edit Task"
-            initialData={editingTask}
-            categories={categories}
-            onClose={() => setEditingTask(null)}
-            onSave={updateTask}
-          />
-        )}
-
-        {isPomodoroOpen && (
-          <PomodoroModal
-            selectedTask={pomodoroSelectedTask}
-            tasks={tasks}
-            soundEnabled={soundEnabled}
-            onSelectTask={setPomodoroSelectedTask}
-            onClose={() => setIsPomodoroOpen(false)}
-          />
-        )}
-
-        {isBackupOpen && (
-          <BackupModal
-            tasks={tasks}
-            currentUser={currentUser}
-            onImport={(newTasks) => setTasks(newTasks)}
-            onClose={() => setIsBackupOpen(false)}
-          />
-        )}
-
-        {isProfileOpen && (
-          <ProfileModal
-            user={currentUser}
-            onUpdateUser={(updated) => {
-              setCurrentUser(updated);
-              setRegisteredUsers(prev => prev.map(u => u.id === updated.id ? updated : u));
-            }}
-            onLogout={() => {
-              setCurrentUser(null);
-              setIsProfileOpen(false);
-            }}
-            onClose={() => setIsProfileOpen(false)}
-          />
-        )}
-
-        {isTagModalOpen && (
-          <TagModal
-            onAddTag={(newTag) => {
-              setCategories(prev => [...prev, newTag]);
-              setIsTagModalOpen(false);
-            }}
-            onClose={() => setIsTagModalOpen(false)}
-          />
-        )}
-
+            );
+          })}
+          
+          <button
+            onClick={() => setIsTagModalOpen(true)}
+            className="px-2 py-1 rounded-md text-[11px] text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200 border border-dashed border-zinc-300 dark:border-zinc-700 flex items-center gap-1 transition-colors"
+          >
+            <Icon name="plus" className="w-2.5 h-2.5" />
+            <span>Tag</span>
+          </button>
+        </div>
       </div>
-    </ErrorBoundary>
+
+      {/* VIEW RENDERER */}
+      {viewMode === 'list' ? (
+        <div className="space-y-2">
+          {filteredTasks.length === 0 ? (
+            <EmptyState
+              searchQuery={searchQuery}
+              activeTab={activeTab}
+              onOpenAdd={() => setIsAddFormOpen(true)}
+              onSwitchTab={(t) => setActiveTab(t)}
+            />
+          ) : (
+            filteredTasks.map(task => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                categories={categories}
+                onToggle={toggleComplete}
+                onStar={toggleStar}
+                onEdit={(t) => setEditingTask(t)}
+                onDelete={deleteTask}
+                onToggleSubtask={toggleSubtask}
+                onStartFocus={(t) => {
+                  setPomodoroSelectedTask(t);
+                  setIsPomodoroOpen(true);
+                }}
+              />
+            ))
+          )}
+        </div>
+      ) : (
+        <KanbanBoard
+          tasks={filteredTasks}
+          categories={categories}
+          onMoveTask={setTaskStatus}
+          onToggleComplete={toggleComplete}
+          onEdit={(t) => setEditingTask(t)}
+          onDelete={deleteTask}
+        />
+      )}
+
+      {/* FOOTER */}
+      {tasks.length > 0 && (
+        <div className="mt-8 pt-4 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between text-xs text-zinc-400">
+          <span>{filteredTasks.length} of {tasks.length} tasks</span>
+          {stats.completed > 0 && (
+            <button
+              onClick={clearCompleted}
+              className="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors flex items-center gap-1 text-[11px]"
+            >
+              Clear completed ({stats.completed})
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* MODALS */}
+      {isAddFormOpen && (
+        <TaskModal
+          title="New Task"
+          categories={categories}
+          onClose={() => setIsAddFormOpen(false)}
+          onSave={addTask}
+        />
+      )}
+
+      {editingTask && (
+        <TaskModal
+          title="Edit Task"
+          initialData={editingTask}
+          categories={categories}
+          onClose={() => setEditingTask(null)}
+          onSave={updateTask}
+        />
+      )}
+
+      {isPomodoroOpen && (
+        <PomodoroModal
+          selectedTask={pomodoroSelectedTask}
+          tasks={tasks}
+          soundEnabled={soundEnabled}
+          onSelectTask={setPomodoroSelectedTask}
+          onClose={() => setIsPomodoroOpen(false)}
+        />
+      )}
+
+      {isBackupOpen && (
+        <BackupModal
+          tasks={tasks}
+          currentUser={currentUser}
+          onImport={(newTasks) => setTasks(newTasks)}
+          onClose={() => setIsBackupOpen(false)}
+        />
+      )}
+
+      {isProfileOpen && (
+        <ProfileModal
+          user={currentUser}
+          onUpdateUser={(updated) => {
+            setCurrentUser(updated);
+            setRegisteredUsers(prev => prev.map(u => u.id === updated.id ? updated : u));
+          }}
+          onLogout={() => {
+            setCurrentUser(null);
+            setIsProfileOpen(false);
+          }}
+          onClose={() => setIsProfileOpen(false)}
+        />
+      )}
+
+      {isTagModalOpen && (
+        <TagModal
+          onAddTag={(newTag) => {
+            setCategories(prev => [...prev, newTag]);
+            setIsTagModalOpen(false);
+          }}
+          onClose={() => setIsTagModalOpen(false)}
+        />
+      )}
+
+    </div>
   );
 }
 
-// Child Components
+// ==========================================
+// KANBAN BOARD
+// ==========================================
 function KanbanBoard({ tasks, categories, onMoveTask, onToggleComplete, onEdit, onDelete }) {
   const columns = [
-    { id: 'todo', title: 'To Do', icon: 'circle', color: 'text-slate-400' },
-    { id: 'in_progress', title: 'In Progress', icon: 'clock', color: 'text-amber-500' },
-    { id: 'completed', title: 'Completed', icon: 'check-circle-2', color: 'text-emerald-500' },
+    { id: 'todo', title: 'To do' },
+    { id: 'in_progress', title: 'In progress' },
+    { id: 'completed', title: 'Completed' },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
       {columns.map(col => {
         const colTasks = tasks.filter(t => (t.status || (t.completed ? 'completed' : 'todo')) === col.id);
         return (
           <div
             key={col.id}
-            className="bg-slate-100/70 dark:bg-surface-darkCard/50 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-4 flex flex-col min-h-[420px]"
+            className="bg-zinc-100/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 flex flex-col min-h-[380px]"
           >
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-200/60 dark:border-slate-800/60">
-              <div className="flex items-center gap-2">
-                <div className={col.color}>
-                  <Icon name={col.icon} className="w-4 h-4" />
-                </div>
-                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">{col.title}</h3>
-              </div>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                {colTasks.length}
-              </span>
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-200 dark:border-zinc-800/80">
+              <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">{col.title}</span>
+              <span className="text-[11px] font-medium text-zinc-400">{colTasks.length}</span>
             </div>
 
-            <div className="space-y-3 flex-1 overflow-y-auto max-h-[600px] pr-1">
+            <div className="space-y-2 flex-1 overflow-y-auto">
               {colTasks.length === 0 ? (
-                <div className="text-center py-10 text-xs text-slate-400">
-                  No tasks in this lane
-                </div>
+                <div className="text-center py-8 text-[11px] text-zinc-400">Empty</div>
               ) : (
                 colTasks.map(task => {
                   const priorityObj = PRIORITIES[task.priority] || PRIORITIES.medium;
-                  const catObj = (categories && categories.find(c => c.id === task.category)) || categories[1] || { name: 'General' };
-                  const totalSub = (task.subtasks || []).length;
-                  const doneSub = (task.subtasks || []).filter(s => s.done).length;
-
                   return (
                     <div
                       key={task.id}
-                      className="bg-white dark:bg-surface-darkCard border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl shadow-sm hover:shadow-md transition-all group"
+                      className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-3 rounded-lg card-shadow group"
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <span className="text-xs font-semibold text-slate-800 dark:text-slate-100 leading-snug">
+                      <div className="flex items-start justify-between gap-1">
+                        <span className="text-xs font-medium text-zinc-900 dark:text-zinc-100 leading-snug">
                           {task.title}
                         </span>
-                        <span className={`text-[10px] px-2 py-0.5 rounded font-medium border flex-shrink-0 ${priorityObj.badge}`}>
-                          {priorityObj.label}
-                        </span>
+                        <span className={`w-1.5 h-1.5 rounded-full ${priorityObj.dot} flex-shrink-0 mt-1.5`}></span>
                       </div>
 
                       {task.description && (
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
+                        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2">
                           {task.description}
                         </p>
                       )}
 
-                      {totalSub > 0 && (
-                        <div className="mt-2.5 text-[10px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
-                          <span>Checklist: {doneSub}/{totalSub}</span>
-                          <div className="w-16 bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                            <div
-                              className="bg-brand-500 h-full rounded-full"
-                              style={{ width: `${(doneSub / totalSub) * 100}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-100 dark:border-slate-800/80 text-[11px]">
-                        <span className="text-slate-400">{catObj ? catObj.name : ''}</span>
-                        
+                      <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-zinc-100 dark:border-zinc-800/80 text-[10px]">
+                        <span className="text-zinc-400 capitalize">{task.category}</span>
                         <div className="flex items-center gap-1">
                           {col.id !== 'todo' && (
                             <button
                               onClick={() => onMoveTask(task.id, 'todo')}
-                              title="Move to To Do"
-                              className="px-1.5 py-0.5 rounded text-[10px] font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-800"
+                              className="px-1.5 py-0.5 rounded text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                             >
-                              To Do
+                              To do
                             </button>
                           )}
                           {col.id !== 'in_progress' && (
                             <button
                               onClick={() => onMoveTask(task.id, 'in_progress')}
-                              title="Move to In Progress"
-                              className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400"
+                              className="px-1.5 py-0.5 rounded text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                             >
-                              In Progress
+                              Doing
                             </button>
                           )}
                           {col.id !== 'completed' && (
                             <button
                               onClick={() => onMoveTask(task.id, 'completed')}
-                              title="Move to Completed"
-                              className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400"
+                              className="px-1.5 py-0.5 rounded text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                             >
-                              Done ✓
+                              Done
                             </button>
                           )}
                         </div>
@@ -982,11 +865,12 @@ function KanbanBoard({ tasks, categories, onMoveTask, onToggleComplete, onEdit, 
   );
 }
 
+// ==========================================
+// CLEAN TASK CARD
+// ==========================================
 function TaskCard({ task, categories, onToggle, onStar, onEdit, onDelete, onToggleSubtask, onStartFocus }) {
   const [isSubtasksExpanded, setIsSubtasksExpanded] = useState(false);
-  const categoryObj = (categories && categories.find(c => c.id === task.category)) || categories[1] || { name: 'Task', bg: 'bg-indigo-50 text-indigo-600 border-indigo-200' };
   const priorityObj = PRIORITIES[task.priority] || PRIORITIES.medium;
-  
   const subtasks = task.subtasks || [];
   const completedSubtasks = subtasks.filter(s => s.done).length;
 
@@ -996,45 +880,44 @@ function TaskCard({ task, categories, onToggle, onStar, onEdit, onDelete, onTogg
     now.setHours(0, 0, 0, 0);
     const [year, month, day] = task.dueDate.split('-');
     const target = new Date(year, month - 1, day);
-    const diffTime = target - now;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffDays = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
 
-    if (diffDays < 0) return { label: `Overdue (${Math.abs(diffDays)}d)`, alert: true };
-    if (diffDays === 0) return { label: 'Due Today', alert: true, today: true };
-    if (diffDays === 1) return { label: 'Due Tomorrow', alert: false };
+    if (diffDays < 0) return { label: 'Overdue', alert: true };
+    if (diffDays === 0) return { label: 'Today', alert: true };
+    if (diffDays === 1) return { label: 'Tomorrow', alert: false };
     return { label: target.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }), alert: false };
   }, [task.dueDate]);
 
   return (
     <div
-      className={`group relative bg-white dark:bg-surface-darkCard border rounded-2xl p-4 sm:p-5 transition-all duration-200 hover:shadow-card dark:hover:shadow-card-dark ${
+      className={`group bg-white dark:bg-zinc-900 border rounded-xl p-3 sm:p-3.5 transition-all card-shadow ${
         task.completed
-          ? 'border-slate-200/50 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/30'
-          : 'border-slate-200/90 dark:border-surface-darkBorder/90'
+          ? 'border-zinc-200/60 dark:border-zinc-800/60 opacity-60'
+          : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
       }`}
     >
-      <div className="flex items-start gap-3.5">
+      <div className="flex items-start gap-3">
+        {/* Minimal round checkbox */}
         <button
           onClick={() => onToggle(task.id)}
-          className={`mt-0.5 flex-shrink-0 w-6 h-6 rounded-lg border flex items-center justify-center transition-all ${
+          className={`mt-0.5 flex-shrink-0 w-4 h-4 rounded border flex items-center justify-center transition-colors ${
             task.completed
-              ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm'
-              : 'border-slate-300 dark:border-slate-700 hover:border-brand-500 bg-white dark:bg-slate-800'
+              ? 'bg-zinc-900 border-zinc-900 text-white dark:bg-zinc-100 dark:border-zinc-100 dark:text-zinc-900'
+              : 'border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 bg-transparent'
           }`}
         >
-          {task.completed ? (
-            <Icon name="check" className="w-4 h-4 stroke-[3]" />
-          ) : null}
+          {task.completed ? <Icon name="check" className="w-3 h-3 stroke-[2.5]" /> : null}
         </button>
 
+        {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <h3
               onClick={() => onToggle(task.id)}
-              className={`text-base font-semibold cursor-pointer select-none transition-all break-words ${
+              className={`text-sm font-medium cursor-pointer select-none task-title break-words ${
                 task.completed
-                  ? 'text-slate-400 dark:text-slate-500 line-through'
-                  : 'text-slate-800 dark:text-slate-100 hover:text-brand-600 dark:hover:text-brand-400'
+                  ? 'text-zinc-400 dark:text-zinc-500 line-through'
+                  : 'text-zinc-900 dark:text-zinc-100'
               }`}
             >
               {task.title}
@@ -1042,40 +925,35 @@ function TaskCard({ task, categories, onToggle, onStar, onEdit, onDelete, onTogg
           </div>
 
           {task.description && (
-            <p className={`text-xs sm:text-sm mt-1 break-words ${
-              task.completed ? 'text-slate-400 dark:text-slate-600' : 'text-slate-500 dark:text-slate-400'
+            <p className={`text-xs mt-0.5 break-words ${
+              task.completed ? 'text-zinc-400 dark:text-zinc-600' : 'text-zinc-500 dark:text-zinc-400'
             }`}>
               {task.description}
             </p>
           )}
 
+          {/* Subtasks dropdown */}
           {subtasks.length > 0 && (
-            <div className="mt-3">
+            <div className="mt-2">
               <button
                 onClick={() => setIsSubtasksExpanded(!isSubtasksExpanded)}
-                className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                className="flex items-center gap-1.5 text-[11px] text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
               >
-                <Icon name={isSubtasksExpanded ? "chevron-down" : "chevron-right"} className="w-3.5 h-3.5" />
-                <span>Checklist: {completedSubtasks} of {subtasks.length} done</span>
-                <div className="w-20 bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden ml-1">
-                  <div 
-                    className="bg-brand-500 h-full rounded-full transition-all duration-300"
-                    style={{ width: `${(completedSubtasks / subtasks.length) * 100}%` }}
-                  ></div>
-                </div>
+                <Icon name={isSubtasksExpanded ? "chevron-down" : "chevron-right"} className="w-3 h-3" />
+                <span>{completedSubtasks}/{subtasks.length} subtasks</span>
               </button>
 
               {isSubtasksExpanded && (
-                <div className="mt-2.5 space-y-1.5 pl-3 border-l-2 border-slate-200 dark:border-slate-800">
+                <div className="mt-1.5 space-y-1 pl-3 border-l border-zinc-200 dark:border-zinc-800">
                   {subtasks.map(st => (
                     <div key={st.id} className="flex items-center gap-2 text-xs">
                       <input
                         type="checkbox"
                         checked={st.done}
                         onChange={() => onToggleSubtask(task.id, st.id)}
-                        className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 w-3.5 h-3.5 cursor-pointer"
+                        className="rounded border-zinc-300 dark:border-zinc-700 text-zinc-900 focus:ring-0 w-3 h-3 cursor-pointer"
                       />
-                      <span className={`${st.done ? 'text-slate-400 line-through' : 'text-slate-700 dark:text-slate-300'}`}>
+                      <span className={`text-[11px] ${st.done ? 'text-zinc-400 line-through' : 'text-zinc-700 dark:text-zinc-300'}`}>
                         {st.title}
                       </span>
                     </div>
@@ -1085,26 +963,17 @@ function TaskCard({ task, categories, onToggle, onStar, onEdit, onDelete, onTogg
             </div>
           )}
 
-          <div className="flex flex-wrap items-center gap-2 mt-3 text-xs">
-            <span className={`px-2.5 py-0.5 rounded-md font-medium border ${categoryObj ? categoryObj.bg : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
-              {categoryObj ? categoryObj.name : 'Task'}
-            </span>
+          {/* Meta line */}
+          <div className="flex flex-wrap items-center gap-2 mt-2 text-[11px]">
+            <span className="text-zinc-400 capitalize">{task.category}</span>
 
-            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md font-medium border ${priorityObj.badge}`}>
+            <span className="flex items-center gap-1 text-zinc-400">
               <span className={`w-1.5 h-1.5 rounded-full ${priorityObj.dot}`}></span>
               {priorityObj.label}
             </span>
 
             {dueDateInfo && (
-              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-medium border ${
-                task.completed
-                  ? 'border-slate-200 dark:border-slate-800 text-slate-400'
-                  : dueDateInfo.alert
-                  ? dueDateInfo.today
-                    ? 'border-amber-300 dark:border-amber-800/80 bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400'
-                    : 'border-rose-300 dark:border-rose-800/80 bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400'
-              }`}>
+              <span className={`flex items-center gap-1 ${dueDateInfo.alert && !task.completed ? 'text-red-500 font-medium' : 'text-zinc-400'}`}>
                 <Icon name="calendar" className="w-3 h-3" />
                 {dueDateInfo.label}
               </span>
@@ -1112,41 +981,40 @@ function TaskCard({ task, categories, onToggle, onStar, onEdit, onDelete, onTogg
           </div>
         </div>
 
-        <div className="flex items-center gap-1 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+        {/* Action icons */}
+        <div className="flex items-center gap-0.5 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={() => onStartFocus(task)}
-            title="Focus on this task with Pomodoro"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+            title="Focus"
+            className="p-1.5 rounded text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
           >
-            <Icon name="timer" className="w-4 h-4" />
+            <Icon name="clock" className="w-3.5 h-3.5" />
           </button>
 
           <button
             onClick={() => onStar(task.id)}
             title={task.starred ? "Unstar" : "Star"}
-            className={`p-1.5 rounded-lg transition-colors ${
-              task.starred
-                ? 'text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/40'
-                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+            className={`p-1.5 rounded ${
+              task.starred ? 'text-amber-500' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200'
             }`}
           >
-            <Icon name="star" className={`w-4 h-4 ${task.starred ? 'fill-amber-500' : ''}`} />
+            <Icon name="star" className={`w-3.5 h-3.5 ${task.starred ? 'fill-amber-500' : ''}`} />
           </button>
 
           <button
             onClick={() => onEdit(task)}
-            title="Edit task"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            title="Edit"
+            className="p-1.5 rounded text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
           >
-            <Icon name="edit-3" className="w-4 h-4" />
+            <Icon name="edit-3" className="w-3.5 h-3.5" />
           </button>
 
           <button
             onClick={() => onDelete(task.id)}
-            title="Delete task"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
+            title="Delete"
+            className="p-1.5 rounded text-zinc-400 hover:text-red-500"
           >
-            <Icon name="trash-2" className="w-4 h-4" />
+            <Icon name="trash-2" className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
@@ -1154,6 +1022,9 @@ function TaskCard({ task, categories, onToggle, onStar, onEdit, onDelete, onTogg
   );
 }
 
+// ==========================================
+// QUICK ADD BAR
+// ==========================================
 function QuickAddBar({ onAdd, categories }) {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('work');
@@ -1187,37 +1058,34 @@ function QuickAddBar({ onAdd, categories }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white dark:bg-surface-darkCard border border-slate-200/90 dark:border-surface-darkBorder/90 rounded-2xl p-2.5 sm:p-3 shadow-card dark:shadow-card-dark transition-all focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500"
+      className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-2.5 sm:p-3 card-shadow focus-within:border-zinc-400 dark:focus-within:border-zinc-600 transition-colors"
     >
       <div className="flex items-center gap-2">
-        <div className="p-2 text-brand-500">
-          <Icon name="plus-circle" className="w-5 h-5" />
-        </div>
         <input
           type="text"
           value={title}
           onFocus={() => setIsExpanded(true)}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Add a new task... (press Enter to create)"
-          className="w-full bg-transparent text-sm sm:text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
+          placeholder="Add a task... (press Enter)"
+          className="w-full bg-transparent text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none"
         />
         <button
           type="submit"
           disabled={!title.trim()}
-          className="px-4 py-2 rounded-xl text-sm font-semibold bg-brand-600 hover:bg-brand-500 disabled:opacity-40 disabled:hover:bg-brand-600 text-white transition-all btn-press whitespace-nowrap"
+          className="px-3 py-1 rounded-md text-xs font-medium bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 disabled:opacity-30 transition-colors btn-press"
         >
           Add
         </button>
       </div>
 
       {isExpanded && (
-        <div className="flex flex-wrap items-center gap-3 pt-3 mt-2 border-t border-slate-100 dark:border-slate-800/80 text-xs">
+        <div className="flex flex-wrap items-center gap-3 pt-2.5 mt-2 border-t border-zinc-100 dark:border-zinc-800 text-xs">
           <div className="flex items-center gap-1.5">
-            <span className="text-slate-400 font-medium">Tag:</span>
+            <span className="text-zinc-400 text-[11px]">Tag:</span>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-slate-700 dark:text-slate-300 focus:outline-none"
+              className="bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded px-1.5 py-0.5 text-zinc-700 dark:text-zinc-300 focus:outline-none text-[11px]"
             >
               {(categories || []).filter(c => c.id !== 'all').map(c => (
                 <option key={c.id} value={c.id}>{c.name}</option>
@@ -1226,34 +1094,34 @@ function QuickAddBar({ onAdd, categories }) {
           </div>
 
           <div className="flex items-center gap-1.5">
-            <span className="text-slate-400 font-medium">Priority:</span>
+            <span className="text-zinc-400 text-[11px]">Priority:</span>
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
-              className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-slate-700 dark:text-slate-300 focus:outline-none"
+              className="bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded px-1.5 py-0.5 text-zinc-700 dark:text-zinc-300 focus:outline-none text-[11px]"
             >
-              <option value="low">Low 🟢</option>
-              <option value="medium">Medium 🟡</option>
-              <option value="high">High 🔴</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
             </select>
           </div>
 
           <div className="flex items-center gap-1.5">
-            <span className="text-slate-400 font-medium">Due:</span>
+            <span className="text-zinc-400 text-[11px]">Due:</span>
             <input
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-slate-700 dark:text-slate-300 focus:outline-none"
+              className="bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded px-1.5 py-0.5 text-zinc-700 dark:text-zinc-300 focus:outline-none text-[11px]"
             />
           </div>
 
           <button
             type="button"
             onClick={() => setIsExpanded(false)}
-            className="ml-auto text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 font-medium"
+            className="ml-auto text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 text-[11px]"
           >
-            Collapse
+            Close
           </button>
         </div>
       )}
@@ -1261,6 +1129,9 @@ function QuickAddBar({ onAdd, categories }) {
   );
 }
 
+// ==========================================
+// TASK MODAL
+// ==========================================
 function TaskModal({ title, initialData, categories, onClose, onSave }) {
   const [taskTitle, setTaskTitle] = useState(initialData ? initialData.title : '');
   const [description, setDescription] = useState(initialData ? initialData.description || '' : '');
@@ -1301,22 +1172,19 @@ function TaskModal({ title, initialData, categories, onClose, onSave }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white dark:bg-surface-darkCard border border-slate-200 dark:border-surface-darkBorder rounded-3xl w-full max-w-lg p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h2>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          >
-            <Icon name="x" className="w-5 h-5" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-xs animate-fadeIn">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-md p-5 card-shadow">
+        <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{title}</h2>
+          <button onClick={onClose} className="p-1 rounded text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+            <Icon name="x" className="w-4 h-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-3">
           <div>
-            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-              Task Title *
+            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+              Title
             </label>
             <input
               type="text"
@@ -1324,56 +1192,52 @@ function TaskModal({ title, initialData, categories, onClose, onSave }) {
               autoFocus
               value={taskTitle}
               onChange={(e) => setTaskTitle(e.target.value)}
-              placeholder="e.g. Prepare presentation slides"
-              className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+              placeholder="What needs to be done?"
+              className="w-full px-3 py-1.5 rounded-lg text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-100 focus:outline-none focus:border-zinc-400"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-              Description (Optional)
+            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+              Notes
             </label>
             <textarea
               rows="2"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add notes, bullet points, or instructions..."
-              className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-500/40 resize-none"
+              placeholder="Add details..."
+              className="w-full px-3 py-1.5 rounded-lg text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 resize-none"
             ></textarea>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-              Checklist & Subtasks ({subtasks.length})
+            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+              Checklist
             </label>
-            <div className="flex gap-2 mb-2">
+            <div className="flex gap-1.5 mb-1.5">
               <input
                 type="text"
                 value={newSubtaskInput}
                 onChange={(e) => setNewSubtaskInput(e.target.value)}
-                placeholder="Add a subtask item..."
-                className="flex-1 px-3 py-1.5 rounded-xl text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none"
+                placeholder="Subtask item..."
+                className="flex-1 px-2.5 py-1 rounded-md text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-100 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={handleAddSubtask}
-                className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-200 dark:bg-slate-800 hover:bg-brand-600 hover:text-white transition-colors"
+                className="px-2.5 py-1 rounded-md text-xs font-medium bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300"
               >
-                Add Subtask
+                Add
               </button>
             </div>
 
             {subtasks.length > 0 && (
-              <div className="space-y-1.5 max-h-32 overflow-y-auto p-2 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+              <div className="space-y-1 max-h-24 overflow-y-auto p-1.5 rounded-md bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-800">
                 {subtasks.map(st => (
-                  <div key={st.id} className="flex items-center justify-between gap-2 text-xs">
-                    <span className="text-slate-700 dark:text-slate-300 truncate">{st.title}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveSubtask(st.id)}
-                      className="text-slate-400 hover:text-rose-500"
-                    >
-                      <Icon name="x" className="w-3.5 h-3.5" />
+                  <div key={st.id} className="flex items-center justify-between text-xs py-0.5">
+                    <span className="text-zinc-700 dark:text-zinc-300 truncate">{st.title}</span>
+                    <button type="button" onClick={() => handleRemoveSubtask(st.id)} className="text-zinc-400 hover:text-red-500">
+                      <Icon name="x" className="w-3 h-3" />
                     </button>
                   </div>
                 ))}
@@ -1381,15 +1245,13 @@ function TaskModal({ title, initialData, categories, onClose, onSave }) {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2 pt-1">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-                Category Tag
-              </label>
+              <label className="block text-[11px] font-medium text-zinc-500 mb-1">Tag</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none"
+                className="w-full px-2 py-1 rounded-md text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 focus:outline-none"
               >
                 {(categories || []).filter(c => c.id !== 'all').map(c => (
                   <option key={c.id} value={c.id}>{c.name}</option>
@@ -1398,13 +1260,11 @@ function TaskModal({ title, initialData, categories, onClose, onSave }) {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-                Priority
-              </label>
+              <label className="block text-[11px] font-medium text-zinc-500 mb-1">Priority</label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none"
+                className="w-full px-2 py-1 rounded-md text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 focus:outline-none"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -1413,32 +1273,30 @@ function TaskModal({ title, initialData, categories, onClose, onSave }) {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-                Due Date
-              </label>
+              <label className="block text-[11px] font-medium text-zinc-500 mb-1">Due</label>
               <input
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none"
+                className="w-full px-1.5 py-1 rounded-md text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 focus:outline-none"
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-zinc-100 dark:border-zinc-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!taskTitle.trim()}
-              className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-brand-600 hover:bg-brand-500 disabled:opacity-40 text-white shadow-glow transition-all btn-press"
+              className="px-4 py-1.5 rounded-lg text-xs font-medium bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 disabled:opacity-40 btn-press"
             >
-              {initialData ? 'Save Changes' : 'Create Task'}
+              Save
             </button>
           </div>
         </form>
@@ -1447,6 +1305,360 @@ function TaskModal({ title, initialData, categories, onClose, onSave }) {
   );
 }
 
+// ==========================================
+// CLEAN FOCUS TIMER
+// ==========================================
+function PomodoroModal({ selectedTask, tasks, soundEnabled, onSelectTask, onClose }) {
+  const [mode, setMode] = useState('focus');
+  const [timeLeft, setTimeLeft] = useState(25 * 60);
+  const [isRunning, setIsRunning] = useState(false);
+
+  const durations = { focus: 25 * 60, short: 5 * 60, long: 15 * 60 };
+
+  const setTimerMode = (m) => {
+    setIsRunning(false);
+    setMode(m);
+    setTimeLeft(durations[m]);
+  };
+
+  useEffect(() => {
+    let interval = null;
+    if (isRunning && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && isRunning) {
+      setIsRunning(false);
+      if (soundEnabled) playSound('timer');
+      alert(mode === 'focus' ? 'Focus session completed.' : 'Break finished.');
+    }
+    return () => clearInterval(interval);
+  }, [isRunning, timeLeft, mode, soundEnabled]);
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-xs animate-fadeIn">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-sm p-6 card-shadow text-center">
+        
+        <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+          <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Focus Timer</span>
+          <button onClick={onClose} className="p-1 rounded text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+            <Icon name="x" className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="flex items-center justify-center gap-1 my-4 bg-zinc-100 dark:bg-zinc-800 p-0.5 rounded-lg text-xs font-medium">
+          <button
+            onClick={() => setTimerMode('focus')}
+            className={`px-3 py-1 rounded-md transition-all ${mode === 'focus' ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm' : 'text-zinc-500'}`}
+          >
+            25m Focus
+          </button>
+          <button
+            onClick={() => setTimerMode('short')}
+            className={`px-3 py-1 rounded-md transition-all ${mode === 'short' ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm' : 'text-zinc-500'}`}
+          >
+            5m Break
+          </button>
+          <button
+            onClick={() => setTimerMode('long')}
+            className={`px-3 py-1 rounded-md transition-all ${mode === 'long' ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm' : 'text-zinc-500'}`}
+          >
+            15m Break
+          </button>
+        </div>
+
+        <div className="my-6">
+          <div className="text-5xl font-semibold text-zinc-900 dark:text-zinc-100 font-mono tracking-tight">
+            {formatTime(timeLeft)}
+          </div>
+        </div>
+
+        <div className="mb-5 p-2 rounded-lg bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-800 text-left text-xs">
+          <span className="text-zinc-400 text-[10px] block mb-0.5">Task:</span>
+          <select
+            value={selectedTask ? selectedTask.id : ''}
+            onChange={(e) => {
+              const found = tasks.find(t => t.id === e.target.value);
+              onSelectTask(found || null);
+            }}
+            className="w-full bg-transparent font-medium text-zinc-800 dark:text-zinc-200 focus:outline-none"
+          >
+            <option value="">-- General session --</option>
+            {tasks.filter(t => !t.completed).map(t => (
+              <option key={t.id} value={t.id}>{t.title}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center justify-center gap-2">
+          <button
+            onClick={() => setIsRunning(!isRunning)}
+            className="px-6 py-2 rounded-lg text-xs font-semibold bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 btn-press"
+          >
+            {isRunning ? 'Pause' : 'Start'}
+          </button>
+
+          <button
+            onClick={() => {
+              setIsRunning(false);
+              setTimeLeft(durations[mode]);
+            }}
+            className="p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 btn-press"
+          >
+            <Icon name="rotate-ccw" className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// BACKUP MODAL
+// ==========================================
+function BackupModal({ tasks, currentUser, onImport, onClose }) {
+  const [copied, setCopied] = useState(false);
+
+  const downloadJSON = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tasks, null, 2));
+    const dlAnchor = document.createElement('a');
+    dlAnchor.setAttribute("href", dataStr);
+    dlAnchor.setAttribute("download", `tasks_${(currentUser.name || 'user').toLowerCase().replace(/\s+/g, '_')}.json`);
+    dlAnchor.click();
+  };
+
+  const copyMarkdown = () => {
+    let md = `# Tasks\n\n`;
+    tasks.forEach(t => {
+      md += `- [${t.completed ? 'x' : ' '}] ${t.title} (${t.priority})\n`;
+      if (t.description) md += `  ${t.description}\n`;
+    });
+
+    navigator.clipboard.writeText(md).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target.result);
+        if (Array.isArray(parsed)) {
+          onImport(parsed);
+          alert("Imported " + parsed.length + " tasks.");
+          onClose();
+        }
+      } catch (err) {
+        alert("Invalid JSON file.");
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-xs animate-fadeIn">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-sm p-5 card-shadow">
+        <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+          <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Backup & Export</span>
+          <button onClick={onClose} className="p-1 rounded text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+            <Icon name="x" className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="space-y-2 my-4">
+          <button
+            onClick={downloadJSON}
+            className="w-full flex items-center justify-between p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-left transition-colors"
+          >
+            <div>
+              <div className="text-xs font-medium text-zinc-800 dark:text-zinc-200">Export JSON file</div>
+              <div className="text-[11px] text-zinc-400">Save full task database</div>
+            </div>
+            <Icon name="download" className="w-4 h-4 text-zinc-400" />
+          </button>
+
+          <button
+            onClick={copyMarkdown}
+            className="w-full flex items-center justify-between p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-left transition-colors"
+          >
+            <div>
+              <div className="text-xs font-medium text-zinc-800 dark:text-zinc-200">
+                {copied ? "Copied!" : "Copy as Markdown"}
+              </div>
+              <div className="text-[11px] text-zinc-400">Formatted checklist</div>
+            </div>
+            <Icon name="copy" className="w-4 h-4 text-zinc-400" />
+          </button>
+
+          <div className="p-2.5 rounded-lg border border-dashed border-zinc-200 dark:border-zinc-800 text-center">
+            <label className="cursor-pointer block text-xs font-medium text-zinc-700 dark:text-zinc-300">
+              <span>Import JSON file</span>
+              <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
+            </label>
+          </div>
+        </div>
+
+        <button
+          onClick={onClose}
+          className="w-full py-1.5 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// PROFILE MODAL
+// ==========================================
+function ProfileModal({ user, onUpdateUser, onLogout, onClose }) {
+  const [name, setName] = useState(user.name);
+  const [password, setPassword] = useState(user.password);
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    onUpdateUser({
+      ...user,
+      name: name.trim(),
+      password: password
+    });
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-xs animate-fadeIn">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-sm p-5 card-shadow">
+        <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+          <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Account</span>
+          <button onClick={onClose} className="p-1 rounded text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+            <Icon name="x" className="w-4 h-4" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSave} className="mt-4 space-y-3">
+          <div>
+            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Full Name</label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-3 py-1.5 rounded-lg text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-100 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Email</label>
+            <input
+              type="email"
+              disabled
+              value={user.email}
+              className="w-full px-3 py-1.5 rounded-lg text-xs bg-zinc-100 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800 text-zinc-400 cursor-not-allowed"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Password</label>
+            <input
+              type="text"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-1.5 rounded-lg text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-100 focus:outline-none"
+            />
+          </div>
+
+          <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={onLogout}
+              className="text-xs font-medium text-red-500 hover:text-red-600 flex items-center gap-1"
+            >
+              Sign out
+            </button>
+
+            <button
+              type="submit"
+              className="px-4 py-1.5 rounded-lg text-xs font-medium bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 btn-press"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// TAG CREATOR MODAL
+// ==========================================
+function TagModal({ onAddTag, onClose }) {
+  const [tagName, setTagName] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!tagName.trim()) return;
+
+    onAddTag({
+      id: 'tag_' + Date.now(),
+      name: tagName.trim()
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-xs animate-fadeIn">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-xs p-5 card-shadow">
+        <h3 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mb-3">Add Tag</h3>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <input
+            type="text"
+            required
+            autoFocus
+            placeholder="Tag name"
+            value={tagName}
+            onChange={(e) => setTagName(e.target.value)}
+            className="w-full px-3 py-1.5 rounded-lg text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-100 focus:outline-none"
+          />
+
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-3 py-1 rounded-md text-xs font-medium text-zinc-500"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={!tagName.trim()}
+              className="px-3 py-1 rounded-md text-xs font-medium bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 disabled:opacity-40 btn-press"
+            >
+              Add
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// CLEAN AUTH SCREEN
+// ==========================================
 function AuthScreen({ authMode, setAuthMode, registeredUsers, onLogin, onSignUp, isDark, setIsDark }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -1454,16 +1666,14 @@ function AuthScreen({ authMode, setAuthMode, registeredUsers, onLogin, onSignUp,
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
 
   const switchMode = (mode) => {
     setErrorMsg('');
-    setSuccessMsg('');
     setAuthMode(mode);
   };
 
   const handleFillDemo = () => {
-    setEmail('alex@auratask.io');
+    setEmail('alex@example.com');
     setPassword('password123');
     setErrorMsg('');
   };
@@ -1471,258 +1681,206 @@ function AuthScreen({ authMode, setAuthMode, registeredUsers, onLogin, onSignUp,
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrorMsg('');
-    setSuccessMsg('');
     const cleanEmail = email.trim().toLowerCase();
 
     if (authMode === 'signup') {
-      if (!name.trim()) { setErrorMsg('Please enter your full name.'); return; }
-      if (!cleanEmail || !cleanEmail.includes('@') || !cleanEmail.includes('.')) { setErrorMsg('Please enter a valid email address.'); return; }
-      if (password.length < 6) { setErrorMsg('Password must be at least 6 characters long.'); return; }
+      if (!name.trim()) { setErrorMsg('Enter your name.'); return; }
+      if (!cleanEmail || !cleanEmail.includes('@')) { setErrorMsg('Enter a valid email.'); return; }
+      if (password.length < 6) { setErrorMsg('Password must be at least 6 characters.'); return; }
       if (password !== confirmPassword) { setErrorMsg('Passwords do not match.'); return; }
 
       const existing = registeredUsers.find(u => u.email.toLowerCase() === cleanEmail);
-      if (existing) { setErrorMsg('An account with this email already exists.'); return; }
-
-      const gradients = ['from-brand-600 to-purple-600', 'from-rose-500 to-amber-500', 'from-cyan-500 to-blue-600', 'from-emerald-500 to-teal-600'];
-      const chosen = gradients[Math.floor(Math.random() * gradients.length)];
+      if (existing) { setErrorMsg('Email already in use.'); return; }
 
       const newUser = {
         id: 'user_' + Date.now(),
         name: name.trim(),
         email: cleanEmail,
         password: password,
-        avatarColor: chosen,
         createdAt: Date.now()
       };
 
-      setSuccessMsg('Account created! Welcome to AuraTask Pro...');
-      setTimeout(() => onSignUp(newUser), 400);
+      onSignUp(newUser);
     } else {
-      if (!cleanEmail || !password) { setErrorMsg('Please enter email and password.'); return; }
+      if (!cleanEmail || !password) { setErrorMsg('Enter your email and password.'); return; }
 
       const found = registeredUsers.find(u => u.email.toLowerCase() === cleanEmail);
-      if (!found) { setErrorMsg('No account found with this email.'); return; }
+      if (!found) { setErrorMsg('No account with this email.'); return; }
       if (found.password !== password) { setErrorMsg('Incorrect password.'); return; }
 
-      setSuccessMsg(`Welcome back, ${found.name}!`);
-      setTimeout(() => onLogin(found), 300);
+      onLogin(found);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 relative animate-fadeIn">
-      <div className="absolute top-6 right-6">
+      <div className="absolute top-5 right-5">
         <button
           onClick={() => setIsDark(!isDark)}
-          className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-colors btn-press shadow-sm"
+          className="p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors btn-press"
         >
           <Icon name={isDark ? "sun" : "moon"} className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="text-center mb-8">
-        <div className="w-14 h-14 mx-auto rounded-3xl bg-gradient-to-tr from-brand-600 to-purple-500 flex items-center justify-center text-white shadow-glow mb-3">
-          <Icon name="sparkles" className="w-8 h-8 stroke-[2.2]" />
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-          AuraTask Pro
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          {authMode === 'login' ? 'Sign in to access your personal task workspace' : 'Create an account to start organizing your life'}
-        </p>
-      </div>
-
-      <div className="w-full max-w-md bg-white dark:bg-surface-darkCard border border-slate-200/90 dark:border-surface-darkBorder/90 rounded-3xl p-6 sm:p-8 shadow-card dark:shadow-card-dark glass-card">
-        <div className="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-2xl mb-6 text-sm font-semibold">
-          <button
-            type="button"
-            onClick={() => switchMode('login')}
-            className={`py-2 rounded-xl transition-all ${authMode === 'login' ? 'bg-white dark:bg-surface-darkCard text-brand-600 dark:text-brand-400 shadow-sm' : 'text-slate-500'}`}
-          >
-            Sign In
-          </button>
-          <button
-            type="button"
-            onClick={() => switchMode('signup')}
-            className={`py-2 rounded-xl transition-all ${authMode === 'signup' ? 'bg-white dark:bg-surface-darkCard text-brand-600 dark:text-brand-400 shadow-sm' : 'text-slate-500'}`}
-          >
-            Sign Up
-          </button>
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-6">
+          <div className="w-10 h-10 mx-auto rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center mb-3">
+            <Icon name="check" className="w-5 h-5 stroke-[2.5]" />
+          </div>
+          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+            {authMode === 'login' ? 'Sign in' : 'Create an account'}
+          </h1>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+            {authMode === 'login' ? 'Continue to your personal workspace' : 'Start organizing your tasks simply'}
+          </p>
         </div>
 
-        {errorMsg && (
-          <div className="mb-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-xs font-medium text-rose-600 dark:text-rose-400 flex items-center gap-2">
-            <Icon name="alert-circle" className="w-4 h-4 flex-shrink-0" />
-            <span>{errorMsg}</span>
-          </div>
-        )}
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 card-shadow">
+          {errorMsg && (
+            <div className="mb-4 p-2.5 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-xs text-red-600 dark:text-red-400 flex items-center gap-1.5">
+              <Icon name="alert-circle" className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
 
-        {successMsg && (
-          <div className="mb-4 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-            <Icon name="check" className="w-4 h-4 flex-shrink-0" />
-            <span>{successMsg}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {authMode === 'signup' && (
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">Full Name</label>
-              <div className="relative">
-                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                  <Icon name="user" className="w-4 h-4" />
-                </div>
+          <form onSubmit={handleSubmit} className="space-y-3.5">
+            {authMode === 'signup' && (
+              <div>
+                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Name</label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Maya Lin"
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  placeholder="Maya Lin"
+                  className="w-full px-3 py-1.5 rounded-lg text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-100 focus:outline-none focus:border-zinc-400"
                 />
               </div>
-            </div>
-          )}
+            )}
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">Email Address</label>
-            <div className="relative">
-              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                <Icon name="mail" className="w-4 h-4" />
-              </div>
+            <div>
+              <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Email</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full pl-10 pr-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none"
+                className="w-full px-3 py-1.5 rounded-lg text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-100 focus:outline-none focus:border-zinc-400"
               />
             </div>
-          </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">Password</label>
-            <div className="relative">
-              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                <Icon name="lock" className="w-4 h-4" />
-              </div>
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={authMode === 'signup' ? "Minimum 6 characters" : "••••••••"}
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-              >
-                <Icon name={showPassword ? "eye-off" : "eye"} className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {authMode === 'signup' && (
             <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">Confirm Password</label>
+              <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Password</label>
               <div className="relative">
-                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                  <Icon name="shield-check" className="w-4 h-4" />
-                </div>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full pl-3 pr-8 py-1.5 rounded-lg text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-100 focus:outline-none focus:border-zinc-400"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
+                >
+                  <Icon name={showPassword ? "eye-off" : "eye"} className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {authMode === 'signup' && (
+              <div>
+                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Confirm password</label>
                 <input
                   type={showPassword ? "text" : "password"}
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Repeat password"
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  className="w-full px-3 py-1.5 rounded-lg text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-100 focus:outline-none focus:border-zinc-400"
                 />
               </div>
+            )}
+
+            <button
+              type="submit"
+              className="w-full mt-2 py-2 rounded-lg font-medium text-xs bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 transition-colors btn-press"
+            >
+              {authMode === 'login' ? 'Sign in' : 'Create account'}
+            </button>
+          </form>
+
+          {authMode === 'login' && (
+            <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 text-center">
+              <button
+                type="button"
+                onClick={handleFillDemo}
+                className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200 underline"
+              >
+                Use demo account: alex@example.com / password123
+              </button>
             </div>
           )}
 
-          <button
-            type="submit"
-            className="w-full mt-2 py-3 rounded-xl font-semibold text-sm bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-glow transition-all btn-press flex items-center justify-center gap-2"
-          >
-            <span>{authMode === 'login' ? 'Sign In to AuraTask' : 'Create My Account'}</span>
-            <Icon name="arrow-right" className="w-4 h-4" />
-          </button>
-        </form>
-
-        {authMode === 'login' && (
-          <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 text-center">
-            <button
-              type="button"
-              onClick={handleFillDemo}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/60 transition-colors"
-            >
-              <Icon name="sparkles" className="w-3.5 h-3.5" />
-              Auto-fill Demo: alex@auratask.io / password123
-            </button>
+          <div className="mt-4 text-center text-xs text-zinc-500">
+            {authMode === 'login' ? (
+              <span>Don't have an account? <button onClick={() => switchMode('signup')} className="font-semibold text-zinc-900 dark:text-zinc-100 hover:underline">Sign up</button></span>
+            ) : (
+              <span>Already have an account? <button onClick={() => switchMode('login')} className="font-semibold text-zinc-900 dark:text-zinc-100 hover:underline">Sign in</button></span>
+            )}
           </div>
-        )}
-
-        <div className="mt-6 text-center text-xs text-slate-400">
-          {authMode === 'login' ? (
-            <span>Don't have an account? <button onClick={() => switchMode('signup')} className="text-brand-600 dark:text-brand-400 font-semibold hover:underline">Sign up</button></span>
-          ) : (
-            <span>Already registered? <button onClick={() => switchMode('login')} className="text-brand-600 dark:text-brand-400 font-semibold hover:underline">Sign in</button></span>
-          )}
         </div>
       </div>
     </div>
   );
 }
 
+// ==========================================
+// EMPTY STATE
+// ==========================================
 function EmptyState({ searchQuery, activeTab, onOpenAdd, onSwitchTab }) {
   return (
-    <div className="text-center py-12 px-4 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800 bg-white/40 dark:bg-slate-900/20 backdrop-blur-sm animate-fadeIn">
-      <div className="w-14 h-14 mx-auto rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 mb-4">
-        <Icon name="inbox" className="w-7 h-7" />
-      </div>
-      <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">
-        {searchQuery
-          ? 'No matching tasks found'
-          : activeTab === 'completed'
-          ? 'No completed tasks right now'
-          : activeTab === 'active'
-          ? 'All active tasks are completed!'
-          : 'No tasks in this view'}
-      </h3>
-      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1">
-        {searchQuery
-          ? `We couldn't find any tasks matching "${searchQuery}".`
-          : activeTab === 'completed'
-          ? 'If you just uncompleted a task, it moved back to your Active tasks!'
-          : activeTab === 'active'
-          ? 'You have cleared all active tasks. Great job!'
-          : 'Your workspace is all clear! Add a new task to organize your day.'}
+    <div className="text-center py-10 px-4 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/30">
+      <p className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+        {searchQuery ? 'No matching tasks' : activeTab === 'completed' ? 'No completed tasks' : 'All clear'}
+      </p>
+      <p className="text-[11px] text-zinc-400 mt-0.5">
+        {searchQuery ? 'Try a different search word.' : 'Nothing to show in this view.'}
       </p>
 
-      <div className="flex items-center justify-center gap-2 mt-4">
-        {activeTab === 'completed' && onSwitchTab && (
-          <button
-            onClick={() => onSwitchTab('all')}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-300 border border-brand-200 dark:border-brand-800/60 hover:bg-brand-100 transition-colors"
-          >
-            <span>View All Tasks</span>
-          </button>
-        )}
-
-        {!searchQuery && (
-          <button
-            onClick={onOpenAdd}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white hover:bg-brand-500 shadow-glow transition-all btn-press"
-          >
-            <Icon name="plus" className="w-4 h-4" />
-            <span>Create a Task</span>
-          </button>
-        )}
-      </div>
+      {activeTab === 'completed' && onSwitchTab && (
+        <button
+          onClick={() => onSwitchTab('all')}
+          className="mt-3 inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+        >
+          View all tasks
+        </button>
+      )}
     </div>
   );
+}
+
+export default App;
+export { ErrorBoundary, Icon };
+
+// Optional direct mount when running in a standalone browser root
+if (typeof document !== 'undefined' && document.getElementById('root') && !window.__REACT_ALREADY_MOUNTED__) {
+  const el = document.getElementById('root');
+  if (el && typeof ReactDOM !== 'undefined') {
+    try {
+      const root = ReactDOM.createRoot(el);
+      root.render(
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
+      );
+      window.__REACT_ALREADY_MOUNTED__ = true;
+    } catch (e) {
+      // Mounting handled by build entrypoint
+    }
+  }
 }
